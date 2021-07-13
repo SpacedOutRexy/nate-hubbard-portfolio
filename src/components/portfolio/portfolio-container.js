@@ -1,4 +1,5 @@
 import React, { Component } from "react";
+import axios from 'axios';
 
 import PortfolioItem from "./portfolio-item";
 
@@ -10,14 +11,15 @@ export default class PortfolioContainer extends Component {
             pageTitle: "Welcome to my portfolio",
             isLoading: false,
             data: [
-                {title: "Quip", category: "eCommerce" }, 
-                {title: "Eventbrite", category: "Scheduling"},
-                {title: "Ministry Safe", category: "Enterprise"},
-                {title: "SwingAway", category: "eCommerce"}
+                {title: "Quip", category: "eCommerce", slug: 'quip' }, 
+                {title: "Eventbrite", category: "Scheduling", slug: 'eventbrite'},
+                {title: "Ministry Safe", category: "Enterprise", slug: 'ministry-safe'},
+                {title: "SwingAway", category: "eCommerce", slug: 'swingway'}
             ]
         };
 
         this.handleFilter=this.handleFilter.bind(this);
+        this.getPortfolioItems = this.getPortfolioItems.bind(this);
     }
 
     handleFilter(filter) {
@@ -28,9 +30,20 @@ export default class PortfolioContainer extends Component {
         })
     }
 
+    getPortfolioItems() {
+        axios
+            .get('https://natehubbard.devcamp.space/portfolio/portfolio_items')
+            .then(response => {
+                console.log("response data", response);
+            })
+            .catch(error => {
+                console.log(error);
+            });
+    }
+
     portfolioItems() {
         return this.state.data.map(item => {
-            return <PortfolioItem title={item.title} url={"google.com"} />;
+            return <PortfolioItem title={item.title} url={"google.com"} slug={item.slug}/>;
         });
     }
 
@@ -38,6 +51,8 @@ export default class PortfolioContainer extends Component {
         if (this.state.isLoading) {
             return <div>Loading...</div>
         }
+
+        this.getPortfolioItems();
 
         return (
             <div>
